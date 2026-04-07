@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Produits - By H</title>
+    <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h1>By H</h1>
+    <nav>
+        <a href="index.html">Accueil</a>
+        <a href="produits.html">Produits</a>
+        <a href="panier.html">Panier</a>
+        <a href="commander.html">Commander</a>
+    </nav>
+</header>
+
+<section class="products">
+    <h2>Nos Produits</h2>
+
+    <div class="product-grid">
+
+        <div class="product-card">
+            <img src="https://via.placeholder.com/220x220?text=Lampe+LED" alt="Lampe LED">
+            <h3>Lampe LED</h3>
+            <p>Prix: 2500 DA</p>
+
+            <div class="product-actions">
+                <button class="btn" onclick="ajouterAuPanier('Lampe LED', 2500)">Ajouter au panier</button>
+                <a class="btn secondary-btn" href="commander.html?produit=Lampe%20LED&prix=2500">Commander</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <img src="https://via.placeholder.com/220x220?text=Casque+Bluetooth" alt="Casque Bluetooth">
+            <h3>Casque Bluetooth</h3>
+            <p>Prix: 4500 DA</p>
+
+            <div class="product-actions">
+                <button class="btn" onclick="ajouterAuPanier('Casque Bluetooth', 4500)">Ajouter au panier</button>
+                <a class="btn secondary-btn" href="commander.html?produit=Casque%20Bluetooth&prix=4500">Commander</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <img src="https://via.placeholder.com/220x220?text=Sac+a+dos" alt="Sac à dos">
+            <h3>Sac à dos</h3>
+            <p>Prix: 3200 DA</p>
+
+            <div class="product-actions">
+                <button class="btn" onclick="ajouterAuPanier('Sac à dos', 3200)">Ajouter au panier</button>
+                <a class="btn secondary-btn" href="commander.html?produit=Sac%20%C3%A0%20dos&prix=3200">Commander</a>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 By H</p>
+</footer>
+
+<script>
+function ajouterAuPanier(nom, prix) {
+    const panier = JSON.parse(localStorage.getItem("panier")) || [];
+
+    const produitExistant = panier.find(item => item.nom === nom);
+
+    if (produitExistant) {
+        produitExistant.quantite += 1;
+    } else {
+        panier.push({ nom, prix, quantite: 1 });
+    }
+
+    localStorage.setItem("panier", JSON.stringify(panier));
+    alert(nom + " ajouté au panier");
+}
+</script>
+
+</body>
+</html>

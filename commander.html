@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commander - By H</title>
+    <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h1>By H</h1>
+    <nav>
+        <a href="index.html">Accueil</a>
+        <a href="produits.html">Produits</a>
+        <a href="panier.html">Panier</a>
+        <a href="commander.html">Commander</a>
+    </nav>
+</header>
+
+<section class="order">
+    <h2>Passer une commande</h2>
+
+    <form id="commande-form">
+        <label for="nom">Nom complet</label>
+        <input type="text" id="nom" required>
+
+        <label for="telephone">Téléphone</label>
+        <input type="tel" id="telephone" required>
+
+        <label for="adresse">Adresse</label>
+        <input type="text" id="adresse" required>
+
+        <label for="wilaya">Wilaya</label>
+        <select id="wilaya" required>
+            <option value="">Choisir une wilaya</option>
+        </select>
+
+        <label for="livraison">Mode de livraison</label>
+        <select id="livraison" required>
+            <option value="">Choisir le mode de livraison</option>
+            <option value="domicile">À domicile</option>
+            <option value="bureau">Bureau</option>
+        </select>
+
+        <div id="resume-produits"></div>
+
+        <div id="commande-directe">
+            <label for="produit">Produit</label>
+            <input type="text" id="produit">
+
+            <label for="prix">Prix unitaire (DA)</label>
+            <input type="number" id="prix" min="0">
+
+            <label for="quantite">Quantité</label>
+            <input type="number" id="quantite" min="1" value="1">
+        </div>
+
+        <p id="sous-total"><strong>Sous-total produits :</strong> 0 DA</p>
+        <p id="frais-livraison"><strong>Frais livraison :</strong> 0 DA</p>
+        <p id="total-commande"><strong>Total :</strong> 0 DA</p>
+
+        <button type="submit" class="btn">Envoyer la commande</button>
+    </form>
+</section>
+
+<footer>
+    <p>© 2026 By H</p>
+</footer>
+
+<script>
+const wilayas = [
+    { numero: "01", nom: "Adrar", domicile: 1000, bureau: 600 },
+    { numero: "02", nom: "Chlef", domicile: 600, bureau: 350 },
+    { numero: "03", nom: "Laghouat", domicile: 750, bureau: 500 },
+    { numero: "04", nom: "Oum El Bouaghi", domicile: 700, bureau: 400 },
+    { numero: "05", nom: "Batna", domicile: 650, bureau: 350 },
+    { numero: "06", nom: "Béjaïa", domicile: 550, bureau: 300 },
+    { numero: "07", nom: "Biskra", domicile: 800, bureau: 500 },
+    { numero: "08", nom: "Béchar", domicile: 1050, bureau: 700 },
+    { numero: "09", nom: "Blida", domicile: 250, bureau: 0 },
+    { numero: "10", nom: "Bouira", domicile: 600, bureau: 400 },
+    { numero: "11", nom: "Tamanrasset", domicile: 1200, bureau: 600 },
+    { numero: "12", nom: "Tébessa", domicile: 700, bureau: 450 },
+    { numero: "13", nom: "Tlemcen", domicile: 700, bureau: 400 },
+    { numero: "14", nom: "Tiaret", domicile: 700, bureau: 400 },
+    { numero: "15", nom: "Tizi Ouzou", domicile: 550, bureau: 350 },
+    { numero: "16", nom: "Alger", domicile: 250, bureau: 100 },
+    { numero: "17", nom: "Djelfa", domicile: 750, bureau: 500 },
+    { numero: "18", nom: "Jijel", domicile: 600, bureau: 400 },
+    { numero: "19", nom: "Sétif", domicile: 550, bureau: 350 },
+    { numero: "20", nom: "Saïda", domicile: 750, bureau: 450 },
+    { numero: "21", nom: "Skikda", domicile: 650, bureau: 400 },
+    { numero: "22", nom: "Sidi Bel Abbès", domicile: 650, bureau: 400 },
+    { numero: "23", nom: "Annaba", domicile: 550, bureau: 350 },
+    { numero: "24", nom: "Guelma", domicile: 700, bureau: 400 },
+    { numero: "25", nom: "Constantine", domicile: 550, bureau: 350 },
+    { numero: "26", nom: "Médéa", domicile: 600, bureau: 400 },
+    { numero: "27", nom: "Mostaganem", domicile: 600, bureau: 400 },
+    { numero: "28", nom: "M'Sila", domicile: 650, bureau: 400 },
+    { numero: "29", nom: "Mascara", domicile: 650, bureau: 400 },
+    { numero: "30", nom: "Ouargla", domicile: 800, bureau: 500 },
+    { numero: "31", nom: "Oran", domicile: 550, bureau: 300 },
+    { numero: "32", nom: "El Bayadh", domicile: 850, bureau: 550 },
+    { numero: "33", nom: "Illizi", domicile: 1300, bureau: 900 },
+    { numero: "34", nom: "Bordj Bou Arréridj", domicile: 600, bureau: 400 },
+    { numero: "35", nom: "Boumerdès", domicile: 500, bureau: 350 },
+    { numero: "36", nom: "El Tarf", domicile: 700, bureau: 400 },
+    { numero: "37", nom: "Tindouf", domicile: 1300, bureau: 900 },
+    { numero: "38", nom: "Tissemsilt", domicile: 700, bureau: 400 },
+    { numero: "39", nom: "El Oued", domicile: 800, bureau: 500 },
+    { numero: "40", nom: "Khenchela", domicile: 700, bureau: 450 },
+    { numero: "41", nom: "Souk Ahras", domicile: 800, bureau: 450 },
+    { numero: "42", nom: "Tipaza", domicile: 500, bureau: 350 },
+    { numero: "43", nom: "Mila", domicile: 650, bureau: 400 },
+    { numero: "44", nom: "Aïn Defla", domicile: 600, bureau: 400 },
+    { numero: "45", nom: "Naâma", domicile: 900, bureau: 600 },
+    { numero: "46", nom: "Aïn Témouchent", domicile: 600, bureau: 450 },
+    { numero: "47", nom: "Ghardaïa", domicile: 850, bureau: 500 },
+    { numero: "48", nom: "Relizane", domicile: 600, bureau: 450 },
+    { numero: "49", nom: "Timimoun", domicile: 1200, bureau: 700 },
+    { numero: "50", nom: "Bordj Badji Mokhtar", domicile: null, bureau: null },
+    { numero: "51", nom: "Ouled Djellal", domicile: 800, bureau: 500 },
+    { numero: "52", nom: "Béni Abbès", domicile: 1100, bureau: 1100 },
+    { numero: "53", nom: "In Salah", domicile: 1200, bureau: 700 },
+    { numero: "54", nom: "In Guezzam", domicile: null, bureau: null },
+    { numero: "55", nom: "Touggourt", domicile: 850, bureau: 500 },
+    { numero: "56", nom: "Djanet", domicile: null, bureau: null },
+    { numero: "57", nom: "El M'Ghair", domicile: 900, bureau: 900 },
+    { numero: "58", nom: "El Meniaa", domicile: 900, bureau: 600 }
+];
+
+const wilayaSelect = document.getElementById("wilaya");
+const livraisonSelect = document.getElementById("livraison");
+const produitInput = document.getElementById("produit");
+const prixInput = document.getElementById("prix");
+const quantiteInput = document.getElementById("quantite");
+const resumeProduits = document.getElementById("resume-produits");
+const blocCommandeDirecte = document.getElementById("commande-directe");
+
+wilayas.forEach(w => {
+    const option = document.createElement("option");
+    option.value = w.nom;
+    option.textContent = `${w.numero} - ${w.nom}`;
+    wilayaSelect.appendChild(option);
+});
+
+function getPanier() {
+    return JSON.parse(localStorage.getItem("panier")) || [];
+}
+
+function getCommandeDirecteDepuisURL() {
+    const params = new URLSearchParams(window.location.search);
+    const produit = params.get("produit");
+    const prix = params.get("prix");
+
+    if (produit && prix) {
+        return {
+            produit: produit,
+            prix: Number(prix),
+            quantite: 1
+        };
+    }
+    return null;
+}
+
+function afficherProduitsCommande() {
+    const panier = getPanier();
+    const commandeDirecte = getCommandeDirecteDepuisURL();
+
+    resumeProduits.innerHTML = "";
+
+    if (panier.length > 0) {
+        let html = "<h3>Produits sélectionnés</h3>";
+
+        panier.forEach(item => {
+            const sousTotal = item.prix * item.quantite;
+            html += `
+                <div class="cart-item">
+                    <p><strong>${item.nom}</strong></p>
+                    <p>Prix : ${item.prix} DA</p>
+                    <p>Quantité : ${item.quantite}</p>
+                    <p>Sous-total : ${sousTotal} DA</p>
+                </div>
+            `;
+        });
+
+        resumeProduits.innerHTML = html;
+        blocCommandeDirecte.style.display = "none";
+    } else if (commandeDirecte) {
+        produitInput.value = commandeDirecte.produit;
+        prixInput.value = commandeDirecte.prix;
+        quantiteInput.value = commandeDirecte.quantite;
+        blocCommandeDirecte.style.display = "block";
+    } else {
+        resumeProduits.innerHTML = "<p>Aucun produit sélectionné.</p>";
+        blocCommandeDirecte.style.display = "block";
+    }
+}
+
+function calculerSousTotalProduits() {
+    const panier = getPanier();
+
+    if (panier.length > 0) {
+        return panier.reduce((total, item) => total + (item.prix * item.quantite), 0);
+    }
+
+    const prix = Number(prixInput.value) || 0;
+    const quantite = Number(quantiteInput.value) || 0;
+    return prix * quantite;
+}
+
+function trouverWilayaSelectionnee() {
+    const nomWilaya = wilayaSelect.value;
+    return wilayas.find(w => w.nom === nomWilaya);
+}
+
+function calculerFraisLivraison() {
+    const wilaya = trouverWilayaSelectionnee();
+    const mode = livraisonSelect.value;
+
+    if (!wilaya || !mode) {
+        return 0;
+    }
+
+    const frais = wilaya[mode];
+
+    if (frais === null || frais === undefined) {
+        return null;
+    }
+
+    return frais;
+}
+
+function calculerTotal() {
+    const sousTotal = calculerSousTotalProduits();
+    const frais = calculerFraisLivraison();
+
+    document.getElementById("sous-total").innerHTML =
+        "<strong>Sous-total produits :</strong> " + sousTotal + " DA";
+
+    if (frais === null) {
+        document.getElementById("frais-livraison").innerHTML =
+            "<strong>Frais livraison :</strong> Livraison non disponible";
+
+        document.getElementById("total-commande").innerHTML =
+            "<strong>Total :</strong> Livraison non disponible";
+        return;
+    }
+
+    document.getElementById("frais-livraison").innerHTML =
+        "<strong>Frais livraison :</strong> " + frais + " DA";
+
+    const total = sousTotal + frais;
+
+    document.getElementById("total-commande").innerHTML =
+        "<strong>Total :</strong> " + total + " DA";
+}
+
+document.getElementById("commande-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const nom = document.getElementById("nom").value.trim();
+    const telephone = document.getElementById("telephone").value.trim();
+    const adresse = document.getElementById("adresse").value.trim();
+    const wilayaNom = wilayaSelect.value;
+    const mode = livraisonSelect.value;
+    const wilayaObj = trouverWilayaSelectionnee();
+
+    const frais = calculerFraisLivraison();
+
+    if (frais === null) {
+        alert("La livraison n'est pas disponible pour cette wilaya.");
+        return;
+    }
+
+    const panier = getPanier();
+    const sousTotal = calculerSousTotalProduits();
+    const total = sousTotal + frais;
+
+    let message = "Nouvelle commande By H\n";
+    message += "Nom: " + nom + "\n";
+    message += "Téléphone: " + telephone + "\n";
+    message += "Adresse: " + adresse + "\n";
+    message += "Wilaya: " + (wilayaObj ? wilayaObj.numero + " - " + wilayaNom : wilayaNom) + "\n";
+    message += "Mode de livraison: " + mode + "\n\n";
+
+    if (panier.length > 0) {
+        message += "Produits commandés:\n";
+        panier.forEach(item => {
+            message += "- " + item.nom + " x" + item.quantite + " = " + (item.prix * item.quantite) + " DA\n";
+        });
+    } else {
+        const produit = produitInput.value.trim();
+        const prix = Number(prixInput.value) || 0;
+        const quantite = Number(quantiteInput.value) || 0;
+
+        message += "Produit commandé:\n";
+        message += "- " + produit + " x" + quantite + " = " + (prix * quantite) + " DA\n";
+    }
+
+    message += "\nSous-total produits: " + sousTotal + " DA\n";
+    message += "Frais livraison: " + frais + " DA\n";
+    message += "Total: " + total + " DA";
+
+    alert(message);
+});
+
+wilayaSelect.addEventListener("change", calculerTotal);
+livraisonSelect.addEventListener("change", calculerTotal);
+prixInput.addEventListener("input", calculerTotal);
+quantiteInput.addEventListener("input", calculerTotal);
+
+afficherProduitsCommande();
+calculerTotal();
+</script>
+
+</body>
+</html>

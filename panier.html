@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Panier - By H</title>
+    <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h1>By H</h1>
+    <nav>
+        <a href="index.html">Accueil</a>
+        <a href="produits.html">Produits</a>
+        <a href="panier.html">Panier</a>
+        <a href="commander.html">Commander</a>
+    </nav>
+</header>
+
+<section class="order">
+    <h2>Votre Panier</h2>
+
+    <div id="panier-contenu"></div>
+    <h3 id="total-panier">Total: 0 DA</h3>
+
+    <a href="commander.html" class="btn">Passer à la commande</a>
+</section>
+
+<footer>
+    <p>© 2026 By H</p>
+</footer>
+
+<script>
+function afficherPanier() {
+    const panier = JSON.parse(localStorage.getItem("panier")) || [];
+    const conteneur = document.getElementById("panier-contenu");
+    const totalElement = document.getElementById("total-panier");
+
+    conteneur.innerHTML = "";
+
+    if (panier.length === 0) {
+        conteneur.innerHTML = "<p>Votre panier est vide.</p>";
+        totalElement.textContent = "Total: 0 DA";
+        return;
+    }
+
+    let total = 0;
+
+    panier.forEach((item, index) => {
+        const sousTotal = item.prix * item.quantite;
+        total += sousTotal;
+
+        conteneur.innerHTML += `
+            <div class="cart-item">
+                <p><strong>${item.nom}</strong></p>
+                <p>Prix: ${item.prix} DA</p>
+                <p>Quantité: ${item.quantite}</p>
+                <p>Sous-total: ${sousTotal} DA</p>
+                <button class="btn remove-btn" onclick="supprimerProduit(${index})">Supprimer</button>
+            </div>
+        `;
+    });
+
+    totalElement.textContent = "Total: " + total + " DA";
+}
+
+function supprimerProduit(index) {
+    const panier = JSON.parse(localStorage.getItem("panier")) || [];
+    panier.splice(index, 1);
+    localStorage.setItem("panier", JSON.stringify(panier));
+    afficherPanier();
+}
+
+afficherPanier();
+</script>
+
+</body>
+</html>
